@@ -185,6 +185,7 @@
             display: flex; flex-direction: column !important;
             gap: 0;
             width: auto !important; height: auto !important;
+            align-items: center; /* 确保子元素（圆形图标）在列中居中 */
         }
         /* 强制覆盖内部样式 */
         .mobile-fab-group .trigger-group { flex-direction: column !important; gap: 15px !important; }
@@ -228,6 +229,13 @@
                 position: fixed;
                 bottom: auto; top: 70px; right: 60px; /* 在颜色按钮左侧 */
                 left: auto; width: 200px; margin: 0;
+            }
+
+            /* --- 颜色图标尺寸覆盖 --- */
+            /* 确保颜色触发器在手机端与全屏按钮一样大 (44px) */
+            .color-trigger {
+                width: 44px !important;
+                height: 44px !important;
             }
         }
     </style>
@@ -368,6 +376,10 @@
             const colorDock = document.getElementById('color-dock');
             const mainBtns = document.getElementById('main-btns');
             const mainDock = document.getElementById('main-dock');
+            
+            // 获取需要改名的按钮
+            const btnMobius = document.getElementById('btn-mobius');
+            const btnWebcam = document.getElementById('btn-webcam');
 
             if (isMobile) {
                 // 手机模式：将全屏按钮和颜色区移到 body 下，彻底脱离父级 transform 的影响
@@ -379,6 +391,16 @@
                     document.body.appendChild(colorDock);
                     colorDock.classList.add('mobile-fab-group');
                 }
+                
+                // --- 手机版文案调整 ---
+                if(btnMobius) btnMobius.innerText = "环";
+                // 仅在摄像头未开启或初始化时设置名字，避免覆盖“运行中”的状态（如果需要显示状态）
+                // 但用户要求改名为“交互”，这里强制覆盖为“交互”更符合需求
+                if(btnWebcam) {
+                     // 如果正在运行，可以显示"📷 交互中"，否则显示"📷 交互"
+                     btnWebcam.innerText = window.isWebcamOn ? "📷 交互中" : "📷 交互";
+                }
+
             } else {
                 // PC模式：放回原位
                 if (btnImm.parentElement === document.body) {
@@ -392,7 +414,8 @@
                     colorDock.classList.remove('mobile-fab-group');
                 }
                 // PC端文字恢复
-                document.getElementById('btn-webcam').innerText = window.isWebcamOn ? "📷 运行中" : "📷 摄像头";
+                if(btnMobius) btnMobius.innerText = "莫比乌斯";
+                if(btnWebcam) btnWebcam.innerText = window.isWebcamOn ? "📷 运行中" : "📷 摄像头";
             }
         }
 
@@ -612,6 +635,9 @@
                 if(material) material.uniforms.uSpread.value = 0;
                 if(controls) controls.autoRotate = true;
                 if (!isMobile) btn.innerText = "📷 摄像头";
+                // 手机端恢复文案
+                if (isMobile) btn.innerText = "📷 交互";
+                
                 btn.style.boxShadow = ""; btn.style.color = ""; btn.style.borderColor = "";
                 updateStatus("摄像头已关闭", "#fff");
                 return;
@@ -619,6 +645,9 @@
 
             btn.classList.add('active');
             if(!isMobile) btn.innerText = "⏳ 请求中...";
+            // 手机端点击后也显示请求中...
+            if(isMobile) btn.innerText = "⏳ ...";
+            
             updateStatus("正在请求摄像头...", "#00eaff");
 
             // 手机端完全移除 width/height 限制，让浏览器自动决定最佳分辨率
@@ -651,6 +680,8 @@
                     window.isWebcamOn = true;
                     if(controls) controls.autoRotate = false;
                     if(!isMobile) btn.innerText = "📷 运行中";
+                    if(isMobile) btn.innerText = "📷 交互中";
+                    
                     initMediaPipe();
                     updateStatus("摄像头已启动", "#00ffaa");
                 };
@@ -658,7 +689,12 @@
             } catch (err) {
                 console.error("Webcam Error:", err);
                 if (confirm("摄像头启动失败(可能是权限或设备不支持)，是否切换到触屏手势模式？")) enableTouchSimMode();
-                else { btn.classList.remove('active'); if(!isMobile) btn.innerText = "📷 摄像头"; updateStatus("启动失败", "#ff5555"); }
+                else { 
+                    btn.classList.remove('active'); 
+                    if(!isMobile) btn.innerText = "📷 摄像头"; 
+                    if(isMobile) btn.innerText = "📷 交互";
+                    updateStatus("启动失败", "#ff5555"); 
+                }
             }
         }
 
@@ -669,6 +705,9 @@
             btn.style.boxShadow = "0 0 15px #00ffaa"; btn.style.color = "#00ffaa"; btn.style.borderColor = "#00ffaa";
             const isMobile = window.innerWidth <= 850;
             if (!isMobile) btn.innerText = "👆 触屏控制";
+            // 手机端无需改文案或保持"交互"
+            if (isMobile) btn.innerText = "👆 触屏";
+            
             if(controls) controls.autoRotate = false;
             updateStatus("模式：触屏模拟", "#00ffaa");
         }
