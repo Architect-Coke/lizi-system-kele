@@ -119,25 +119,23 @@
         input[type="range"] { 
             flex: 1; 
             -webkit-appearance: none; 
-            height: 6px; /* 加粗轨道 */
+            height: 6px; 
             background: rgba(255,255,255,0.1); 
             border-radius: 3px; 
             width: 70px; 
             cursor: pointer; 
             outline: none;
         }
-        /* 滑块头样式 Webkit */
         input[type="range"]::-webkit-slider-thumb {
             -webkit-appearance: none;
-            width: 18px; /* 加大滑块 */
+            width: 18px; 
             height: 18px;
             border-radius: 50%;
             background: #fff;
-            box-shadow: 0 0 8px rgba(255,255,255,0.6); /* 发光效果 */
-            margin-top: -6px; /* 垂直居中 */
+            box-shadow: 0 0 8px rgba(255,255,255,0.6); 
+            margin-top: -6px; 
             border: 2px solid rgba(0,0,0,0.1);
         }
-        /* 滑块头样式 Moz */
         input[type="range"]::-moz-range-thumb {
             width: 18px;
             height: 18px;
@@ -210,18 +208,22 @@
 
         .mobile-fab-group {
             position: fixed !important;
-            top: 70px; right: 15px; /* 全屏按钮下方 */
+            /* 15px(top) + 44px(height) + 15px(gap) = 74px */
+            top: 74px; right: 15px; 
             z-index: 300 !important;
             background: transparent !important; border: none !important; padding: 0 !important;
             display: flex; flex-direction: column !important;
-            gap: 0;
-            width: 44px !important; /* 强制宽度与全屏按钮一致，保证对齐 */
+            /* 15px gap to match spacing from top btn */
+            gap: 15px !important; 
+            width: 44px !important; 
             height: auto !important;
-            align-items: center; /* 确保子元素（圆形图标）在列中居中 */
+            align-items: center;
         }
-        /* 强制覆盖内部样式 */
-        .mobile-fab-group .trigger-group { flex-direction: column !important; gap: 15px !important; align-items: center !important; }
-        .mobile-fab-group .trigger-label { text-shadow: 0 1px 3px rgba(0,0,0,0.8); font-weight: 800; color: #ddd; font-size: 10px; }
+        
+        /* 手机端隐藏文字标签 */
+        .mobile-fab-group .trigger-label { display: none !important; }
+        /* 手机端强制覆盖 trigger-item 样式，去掉间距 */
+        .mobile-fab-group .trigger-item { gap: 0 !important; margin: 0 !important; }
 
         /* 手机端布局调整 */
         @media (max-width: 850px) {
@@ -248,26 +250,25 @@
             .slider-group { min-width: 0; flex: 1; display: flex; flex-direction: column; align-items: flex-start; gap: 5px; }
             input[type="range"] { width: 100%; }
             
-            /* 摄像头位置 */
             #webcam-container { 
-                width: 100px; height: 133px; /* 3:4 比例 */
+                width: 100px; height: 133px; 
                 top: 80px; left: 15px; 
                 bottom: auto; right: auto; 
                 border: 1px solid rgba(255, 50, 50, 0.5);
             }
             
-            /* 颜色面板在手机端的位置 */
             #custom-color-picker { 
                 position: fixed;
-                bottom: auto; top: 70px; right: 60px; /* 在颜色按钮左侧 */
+                bottom: auto; top: 70px; right: 60px; 
                 left: auto; width: 200px; margin: 0;
             }
 
-            /* --- 颜色图标尺寸覆盖 --- */
-            /* 确保颜色触发器在手机端与全屏按钮一样大 (44px) */
+            /* --- 颜色图标强制尺寸与全屏按钮一致 (44px) --- */
             .color-trigger {
                 width: 44px !important;
                 height: 44px !important;
+                /* 确保box-sizing不影响视觉大小 */
+                box-sizing: border-box !important;
             }
         }
     </style>
