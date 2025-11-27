@@ -485,20 +485,33 @@
                 // 移除手机端专用行 (如果存在，先将元素移回原位再删除)
                 if (mobileRow) {
                     // 移回主按钮组：交互按钮插在自定义按钮之前
-                    mainBtns.insertBefore(btnWebcam, btnCustom); 
+                    // 检查父子关系
+                    if (btnCustom.parentNode === mainBtns) {
+                        mainBtns.insertBefore(btnWebcam, btnCustom); 
+                    } else {
+                        mainBtns.appendChild(btnWebcam);
+                    }
                     
                     // 主页按钮放回Dock最后
                     mainDock.appendChild(btnHomepage);
                     
                     // 颜色区域放回主Dock (插在pcDivider之前)
-                    mainDock.insertBefore(colorDock, pcDivider);
+                    if (pcDivider.parentNode === mainDock) {
+                        mainDock.insertBefore(colorDock, pcDivider);
+                    } else {
+                        mainDock.appendChild(colorDock);
+                    }
                     
                     mobileRow.remove();
                 }
 
                 // 全屏按钮放回 (插在自定义按钮之前)
                 if (btnImm.parentElement === document.body) {
-                    mainBtns.insertBefore(btnImm, btnCustom); 
+                    if (btnCustom.parentNode === mainBtns) {
+                        mainBtns.insertBefore(btnImm, btnCustom); 
+                    } else {
+                        mainBtns.appendChild(btnImm);
+                    }
                     btnImm.classList.remove('mobile-fab-btn');
                     btnImm.innerText = "⛶ 全屏";
                 }
