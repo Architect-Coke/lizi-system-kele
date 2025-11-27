@@ -748,12 +748,11 @@
                     window.videoStream = null; 
                 }
                 
-                // 关键：彻底重置 video 元素
+                // 关键：彻底重置 video 元素，解决移动端卡住问题
                 const video = document.getElementById('webcam-video');
                 video.pause();
                 video.srcObject = null;
-                // 注意：移除 video.load() 也是一个关键点，某些移动浏览器对此敏感
-                // 但为了确保清空，我们只置空 srcObject 即可
+                // video.load() 移除，解决死循环问题
 
                 handOpenness = 0; handX = 0;
                 if(material) material.uniforms.uSpread.value = 0;
@@ -774,7 +773,7 @@
             window.isWebcamLoading = true;
             btn.classList.add('active');
             if(!isMobile) btn.innerText = "⏳ 请求中...";
-            // 手机端保持交互文案不变
+            if(isMobile) btn.innerText = "📷 交互"; // 保持文字不变
             
             updateStatus("正在请求摄像头...", "#00eaff");
 
@@ -805,6 +804,7 @@
                 window.isWebcamLoading = false;
                 if(controls) controls.autoRotate = false;
                 if(!isMobile) btn.innerText = "📷 运行中";
+                if(isMobile) btn.innerText = "📷 交互";
                 
                 initMediaPipe();
                 updateStatus("摄像头已启动", "#00ffaa");
@@ -816,6 +816,7 @@
                 else { 
                     btn.classList.remove('active'); 
                     if(!isMobile) btn.innerText = "📷 手势控制"; 
+                    if(isMobile) btn.innerText = "📷 交互";
                     updateStatus("启动失败", "#ff5555"); 
                 }
             }
@@ -925,7 +926,10 @@
         };
 
         async function initMediaPipe() {
-            if (window.hands) return;
+            if (window.hands) {
+                detectLoop(); // Ensure loop restarts on subsequent opens
+                return;
+            }
             try {
                 window.hands = new window.Hands({locateFile: (file) => `https://cdn.jsdelivr.net/npm/@mediapipe/hands/${file}`});
                 window.hands.setOptions({ maxNumHands: 1, modelComplexity: 0, minDetectionConfidence: 0.5, minTrackingConfidence: 0.5 });
