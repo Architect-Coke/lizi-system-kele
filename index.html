@@ -266,17 +266,24 @@
                 background: none !important; /* 移除外框背景 */
                 border: none !important; /* 移除边框 */
                 width: auto;
+                position: relative; /* 恢复定位上下文 */
             }
             .trigger-group {
                 flex-direction: row !important; /* 强制横向 */
                 gap: 15px !important;
+                position: relative; /* 确保子绝对定位参考它 */
             }
             
-            /* 颜色面板位置 */
+            /* 修复：颜色面板在手机端样式 */
             #custom-color-picker { 
-                position: absolute;
-                bottom: 100%; left: 0; right: 0; 
-                width: auto; margin-bottom: 10px;
+                position: absolute; /* 相对于 trigger-group */
+                bottom: 100%; /* 面板在按钮上方 */
+                left: 50% !important; /* 强制水平居中 */
+                right: auto !important; /* 取消右侧拉伸 */
+                width: 260px !important; /* 强制固定宽度，防止被父级窄宽度压缩 */
+                margin-bottom: 15px;
+                transform: translateX(-50%); /* 真正的水平居中 */
+                z-index: 500;
             }
 
             /* 颜色触发器尺寸 (保持与全屏按钮一致) */
@@ -460,7 +467,7 @@
 
                 // --- 手机版文案调整 ---
                 if(btnTesseract) btnTesseract.innerText = "四维";
-                if(btnMobius) btnMobius.innerText = "环";
+                if(btnMobius) btnMobius.innerText = "莫比乌斯"; // 恢复为“莫比乌斯”
                 if(btnWebcam) btnWebcam.innerText = "📷 交互"; 
 
             } else {
